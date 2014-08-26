@@ -59,13 +59,31 @@
 			handleChange: function() {
 				this.props.onFilterInput(
 					this.refs.filterTextInput.getDOMNode().value
-					)
+				)
 			},
 			render: function() {
-				return (<input ref="filterTextInput" className="search" type="search" placeholder="Search Contacts" />)
+				return (<input ref="filterTextInput"  value={this.props.filterText} className="search" type="search" placeholder="Search Contacts" onChange={this.handleChange} />)
 			}
 		})
 
+		var MockBar = React.createClass({
+			render: function() {
+				return (
+					<input type="text" placeholder="This is the mock" value={this.props.filterText}/>
+					)
+			}
+		})
+
+		var AddButton = React.createClass({
+			handleClick: function() {
+				this.props.onAdd();
+			},
+			render: function() {
+				return (
+					<button onClick={this.handleClick}>Add to List</button>
+					)
+			}
+		})
 		var FilterableContactTable = React.createClass({ 
 			getInitialState: function() {
 				return {
@@ -77,11 +95,23 @@
 					filterText: filterText
 				})
 			},
+			handleAdd: function() {
+				this.setState({
+					contacts: function() {
+						return this.props.contacts.push({
+									_id: new Date().getTime(),
+									name: this.state.filterText
+								})
+					}
+				})
+			},
 			render: function() {
 				 return (
-				 	<div>
-						<SearchBar filterText={this.state.filterText}/>
-						<ContactTable filterText={this.state.filterText} contacts={this.props.contacts}/>
+				 	<div onAdd={this.handleAdd}>
+						<SearchBar filterText={this.state.filterText} onFilterInput={this.handleFilterInput}/>
+						<MockBar filterText={this.state.filterText}/>
+						<AddButton filterText={this.state.filterText} onAdd={this.handleAdd}/>
+						<ContactTable ref="contactTable" filterText={this.state.filterText} contacts={this.props.contacts}/>
 					</div>
 					)
 			}
