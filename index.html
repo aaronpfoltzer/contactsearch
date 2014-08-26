@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>React Demo :: Contact Search</title>
+	<script src="bower_components/react/react.js"></script>
+	<script src="bower_components/react/JSXTransformer.js"></script>
+	<script src="contacts.js"></script>
+	<style>
+		.table {
+			border: 2px dotted black;
+		}
+		.table-row {
+			text-align: center;
+		}
+		.table-data {
+			border-top: 1px dotted gray;
+		}
+		.search {
+			width: 250px;
+			font-size: 30px;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<script type="text/jsx">
+	/** @jsx React.DOM **/
+
+		var ContactRow = React.createClass({
+			render: function() {
+				return (
+					<tr className="table-row">
+						<td className="table-data">{this.props.contact.name}</td>
+					</tr>
+					)
+			}
+		})
+		var ContactTable = React.createClass({
+			render: function () {
+				var rows = this.props.contacts.map(function(contact) {
+					return <ContactRow key={contact._id} contact={contact} />
+				})
+				return (
+					<table className="table" width="100%">
+						<thead>
+							<tr>
+								<th>Contact Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							{ rows }
+						</tbody>
+					</table>
+					)
+			}
+		})
+
+		var SearchBar = React.createClass({
+			handleChange: function() {
+				this.props.onFilterInput(
+					this.refs.filterTextInput.getDOMNode().value
+					)
+			},
+			render: function() {
+				return (<input ref="filterTextInput" className="search" type="search" placeholder="Search Contacts" />)
+			}
+		})
+
+		var FilterableContactTable = React.createClass({ 
+			getInitialState: function() {
+				return {
+					filterText: "testing 123"
+				}
+			},
+			handleFilterInput: function(filterText) {
+				this.setState({
+					filterText: filterText
+				})
+			},
+			render: function() {
+				 return (
+				 	<div>
+						<SearchBar filterText={this.state.filterText}/>
+						<ContactTable filterText={this.state.filterText} contacts={this.props.contacts}/>
+					</div>
+					)
+			}
+		})
+		React.renderComponent(<FilterableContactTable contacts={contacts} />, document.getElementById('container'))
+
+	</script>
+</body>
+</html>
